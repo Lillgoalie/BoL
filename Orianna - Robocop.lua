@@ -42,7 +42,8 @@ local InterruptList =
 	  ["Katarina"] = "KatarinaR",
 	  ["Malzahar"] = "AlZaharNetherGrasp",
 	  ["Warwick"] = "InfiniteDuress",
-	  ["Velkoz"] = "VelkozR"
+	  ["Velkoz"] = "VelkozR",
+	  ["Fiddlesticks"] = "Crowstorm"
 	}
 
 --[[Spell data]]
@@ -605,16 +606,22 @@ function OnTickChecks()
 
 	if Menu.Misc.UseW > 1 and WREADY then
 		local hitcount, hit = CheckEnemiesHitByW()
-		if hitcount >= (Menu.Misc.UseW -1) then
+		if hitcount >= (Menu.Misc.UseW -1) and VIP_USER then
 			Packet('S_CAST', {spellId=_W}):send()
+		end		
+		if hitcount >= (Menu.Misc.UseW -1) and not VIP_USER then
+			CastSpell(_W)
 		end		
 	end
 
 	if Menu.Misc.UseR > 1 and RREADY then
 		local hitcount, hit = CheckEnemiesHitByR()
-		if (hitcount >= (Menu.Misc.UseR - 1)) and GetDistanceToClosestAlly(BallPos) < Qrange * Far then
+		if (hitcount >= (Menu.Misc.UseR - 1)) and GetDistanceToClosestAlly(BallPos) < Qrange * Far and VIP_USER then
 			Packet('S_CAST', {spellId = _R}):send()
-		end		
+		end	
+		if (hitcount >= (Menu.Misc.UseR - 1)) and GetDistanceToClosestAlly(BallPos) < Qrange * Far and not VIP_USER then
+			CastSpell(_W)
+		end	
 	end
 
 	if Menu.Misc.AutoEInitiate.Active and EREADY then
@@ -634,8 +641,11 @@ function OnTickChecks()
 			for champion, spell in pairs(InterruptList) do
 				if GetDistance(unit) <= Qrange and LastChampionSpell[unit.networkID] and spell == LastChampionSpell[unit.networkID].name and (os.clock() - LastChampionSpell[unit.networkID].time < 1) then
 					CastSpell(_Q, unit.x, unit.z)
-					if GetDistance(BallPos, unit) < Rradius then
+					if GetDistance(BallPos, unit) < Rradius and VIP_USER then
 						Packet('S_CAST', {spellId = _R}):send()
+					end
+					if GetDistance(BallPos, unit) < Rradius and not VIP_USER then
+						CastSpell(_R)
 					end
 				end
 			end
