@@ -31,7 +31,7 @@ function OnLoad()
     Orbwalker:LoadToMenu(Menu.SOWorb)
 	
 	Menu:addSubMenu("["..myHero.charName.." - Combo]", "Combo")
-	Menu.Combo:addParam("combo", "Combo mode", SCRIPT_PARAM_ONKEYDOWN, false, 32)
+	Menu.Combo:addParam("combo", "Combo Mode", SCRIPT_PARAM_ONKEYDOWN, false, 32)
 	Menu.Combo:addParam("comboE", "Use E on enemy in combo", SCRIPT_PARAM_ONOFF, true)
 	Menu.Combo:addParam("Eself", "Use E on yourself if out of range", SCRIPT_PARAM_ONOFF, true)
 	
