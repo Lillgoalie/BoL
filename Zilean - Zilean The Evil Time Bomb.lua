@@ -36,7 +36,7 @@ function OnLoad()
 	Menu.Combo:addParam("Eself", "Use E on yourself if out of range", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("["..myHero.charName.." - Harass]", "Harass")
-	Menu.Harass:addParam("qOnly", "Harass with Q only", SCRIPT_PARAM_ONOFF, true)
+	Menu.Harass:addParam("qOnly", "Harass with Q only", SCRIPT_PARAM_ONOFF, false)
 	Menu.Harass:addParam("harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("G"))
 	Menu.Harass:addParam("autoharass", "Auto Harass", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("A"))
 	
