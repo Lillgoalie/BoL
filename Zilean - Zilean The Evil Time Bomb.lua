@@ -36,6 +36,7 @@ function OnLoad()
 	Menu.Combo:addParam("Eself", "Use E on yourself if out of range", SCRIPT_PARAM_ONOFF, true)
 	
 	Menu:addSubMenu("["..myHero.charName.." - Harass]", "Harass")
+	Menu.Harass:addParam("qOnly", "Harass with Q only", SCRIPT_PARAM_ONOFF, true)
 	Menu.Harass:addParam("harass", "Harass", SCRIPT_PARAM_ONKEYDOWN, false, string.byte("G"))
 	Menu.Harass:addParam("autoharass", "Auto Harass", SCRIPT_PARAM_ONKEYTOGGLE, false, string.byte("A"))
 	
@@ -58,6 +59,10 @@ end
 function OnTick()
 	-- Check for enemies repeatly
 	ts:update()
+	RFarm()
+	ComboMode()
+	travelMode()
+	harass()
 	if Menu.Ads.lifesave then
 		LifeSave()
 	end
@@ -65,7 +70,66 @@ function OnTick()
 	if Menu.Ads.escape then
 		Escape()
 	end
+end
+
+function harass()
+	if (ts.target ~= nil) and ValidTarget(ts.target) then
+		if (Menu.Combo.combo == false) then
+			if (Menu.Harass.harass) and not Menu.Harass.qOnly then
+				if (myHero:CanUseSpell(_Q) == READY) then
+					CastSpell(_Q, ts.target)
+					else
+					
+					if (myHero:CanUseSpell(_W) == READY) then
+						CastSpell(_W)
+					end
+				end
+			end
+			if (Menu.Harass.harass) and Menu.Harass.qOnly then
+				if (myHero:CanUseSpell(_Q) == READY) then
+					CastSpell(_Q, ts.target)
+				end
+			end
+		end
+	end
 	
+	if (ts.target ~= nil) and ValidTarget(ts.target) then
+		if (Menu.Combo.combo == false) then
+			if (Menu.Harass.autoharass) and not Menu.Harass.qOnly and not Recalling then
+				if (myHero:CanUseSpell(_Q) == READY) then
+					CastSpell(_Q, ts.target)
+					if (myHero:CanUseSpell(_Q) ~= READY) then
+						CastSpell(_W)
+					end
+				end
+			end
+			if (Menu.Harass.autoharass) and Menu.Harass.qOnly and not Recalling then
+				if (myHero:CanUseSpell(_Q) == READY) then
+					CastSpell(_Q, ts.target)
+				end
+			end
+		end
+	end
+end
+
+function travelMode()
+	-- Combo key not pressed?
+	if (Menu.Combo.combo == false) then
+		-- Travel mode enabled in menu?
+		if (Menu.Ads.TravelMode) then
+			-- E Ready?
+			if (myHero:CanUseSpell(_E) == READY) then
+				CastSpell(_E, myHero)
+			else
+				if (myHero:CanUseSpell(_W) == READY) then
+					CastSpell(_W)
+				end
+			end
+		end
+	end
+end
+
+function ComboMode()
 	-- Enemy in range?
 	if (ts.target ~= nil) and ValidTarget(ts.target) then
 		-- Combo key pressed?
@@ -83,7 +147,7 @@ function OnTick()
 					CastSpell(_W)
 				end
 			end
-			
+				
 			-- E in combo enabled?
 			if (Menu.Combo.comboE) then
 				-- Able to cast E?
@@ -100,51 +164,10 @@ function OnTick()
 			end
 		end
 	end
-	
-	if (ts.target ~= nil) and ValidTarget(ts.target) then
-		if (Menu.Combo.combo == false) then
-			if (Menu.Harass.harass) then
-				if (myHero:CanUseSpell(_Q) == READY) then
-					CastSpell(_Q, ts.target)
-					else
-					
-					if (myHero:CanUseSpell(_W) == READY) then
-						CastSpell(_W)
-					end
-				end
-			end
-		end
-	end
-	
-	if (ts.target ~= nil) and ValidTarget(ts.target) then
-		if (Menu.Combo.combo == false) then
-			if (Menu.Harass.autoharass) and not Recalling then
-				if (myHero:CanUseSpell(_Q) == READY) then
-					CastSpell(_Q, ts.target)
-					if (myHero:CanUseSpell(_Q) ~= READY) then
-						CastSpell(_W)
-					end
-				end
-			end
-		end
-	end
-		
-	-- Combo key not pressed?
-	if (Menu.Combo.combo == false) then
-		-- Travel mode enabled in menu?
-		if (Menu.Ads.TravelMode) then
-			-- E Ready?
-			if (myHero:CanUseSpell(_E) == READY) then
-				CastSpell(_E, myHero)
-			else
-			
-			if (myHero:CanUseSpell(_W) == READY) then
-				CastSpell(_W)
-			end
-			end
-		end
-	end
-	
+end
+
+
+function RFarm()
 	-- Is farming R enabled in menu?
 	if (Menu.Ads.FarmR) then
 		-- Is champion higher than level 6?
@@ -186,14 +209,14 @@ end
 
 function LifeSave()
 	if myHero.health < (myHero.maxHealth*(Menu.Ads.percenthp*0.01)) then
-		if myHero:CanUseSpell(_R) then
-			CastSpell(_R)
+		if myHero:CanUseSpell(_R) and CountEnemyHeroInRange(1300) >= 1 then
+			CastSpell(_R, myHero)
 		end
 	end
 
 	for i=1, heroManager.iCount do
         local ally = heroManager:getHero(i)
-        if ally.team == myHero.team and ally.team ~= TEAM_ENEMY and myHero:CanUseSpell(_R) == READY and ally.health < (ally.maxHealth * (Menu.Ads.percenthp*0.01)) and GetDistance(myHero, ally) < 900 and ally ~= nil then
+        if ally.team == myHero.team and ally.team ~= TEAM_ENEMY and myHero:CanUseSpell(_R) == READY and ally.health < (ally.maxHealth * (Menu.Ads.percenthp*0.01)) and GetDistance(myHero, ally) < 900 and ally ~= nil and CountEnemyHeroInRange(1300) >= 1 then
             CastSpell(_R, ally)
         end
     end
