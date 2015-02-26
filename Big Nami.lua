@@ -1,6 +1,6 @@
 --[[
 
-    Nami Tsunami by Lillgoalie
+    Big Nami by Claudio
 
     
     Instructions on saving the file:
@@ -35,7 +35,7 @@ function OnLoad()
     Orbwalker = SOW(VP)
     ts = TargetSelector(TARGET_LESS_CAST, 900)
 
-    Menu = scriptConfig("Nami Tsunami", "NamiBL")
+    Menu = scriptConfig("Big Nami ", "NamiBL")
 
     Menu:addSubMenu("["..myHero.charName.." - Orbwalker]", "SOWorb")
     Orbwalker:LoadToMenu(Menu.SOWorb)
@@ -76,7 +76,7 @@ function OnLoad()
 	
 	UpdateWeb(true, ScriptName, id, HWID)
 
-    PrintChat("<font color = \"#33CCCC\">Nami Tsunami by</font> <font color = \"#fff8e7\">Lillgoalie</font>")
+    PrintChat("<font color = \"#33CCCC\">Big Nami by</font> <font color = \"#fff8e7\">Claudio</font>")
 end
 
 function OnBugsplat()
